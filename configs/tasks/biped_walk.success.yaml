@@ -1,0 +1,22 @@
+# 「二足歩行」の数値の成功条件。ダッシュボードで作成（2026-10-27 14:41）。
+# 人がダッシュボード上で確認・修正して承認した（approved: true）。
+# 学習の土台: configs/base.yaml
+task: biped_walk
+approved: true
+window_s: [3, 6]
+criteria:
+- metric: nose_up_deg
+  between: [40, 85]
+  min_fraction: 0.9
+  comment: 上体を大きく起こしている（頭が尻より高い）が、後ろに倒れ込まない
+- {metric: front_feet_z_min_m, min: 0.12, min_fraction: 0.9, comment: 前足2本とも地面から離れている}
+- {metric: rear_feet_z_min_m, max: 0.06, min_fraction: 0.9, comment: 後ろ足2本とも接地して体を支えている（ジャンプや逆立ちではない）}
+- metric: height_m
+  between: [0.35, 0.7]
+  min_fraction: 0.9
+  comment: 胴体が立位(約0.29m)より高く持ち上がっている
+- {metric: roll_deg_abs, max: 20, min_fraction: 0.9, comment: 横に傾きすぎていない}
+- {metric: yaw_rate_abs_deg_s, max: 90, min_fraction: 0.9, comment: その場で激しく回転していない}
+- {metric: dof_vel_rms_mean, min: 0.5, comment: 関節が実際に動いており、静止して固まっていない}
+- {metric: xy_dist_range_m, min: 0.3, comment: 窓内で実際に前進している（姿勢を保っただけではない）}
+- {metric: early_terminations, equals: 0, comment: 途中で倒れて打ち切られない}

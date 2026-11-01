@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Genesis Dojo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Genesis Dojo</h1>
+  <span class="sub">言葉で四脚ロボットに芸を教える ／ Genesis 物理シミュレータ × Unitree Go2 × LLM</span>
+  <span id="modebadge" class="badge"></span>
+</header>
+<main>
+  <section id="left">
+    <div class="card" id="demobox" hidden>
+      <b>公開デモ</b>
+      <p class="muted">学習済みの実験を見る画面です。ここでは、新しい学習は始められません。下の芸を選ぶと、学習の経過が早送りで再生されます。そのあと、周の番号、フローチャートの各段階、動画、グラフを自由に操作できます。</p>
+      <div id="democards"></div>
+    </div>
+    <form id="runform" class="card">
+      <label>ロボットに教えたいことを、日本語で書いてください
+        <span class="inline">
+          <input id="instruction" maxlength="200" placeholder="例: その場で回って" required>
+          <button id="runbtn" type="submit">学習を始める</button>
+        </span>
+      </label>
+      <div id="formmsg" class="muted"></div>
+    </form>
+
+    <div class="card">
+      <div id="instrline"></div>
+      <div id="taskline" class="muted"></div>
+      <div class="row pastrow">
+        <label style="flex:3">過去の実験を開く
+          <select id="expsel"></select>
+        </label>
+        <button id="replaybtn" type="button" class="ghost" title="記録してある学習の経過（報酬生成から判定まで）を、早送りで見直します。学習をやり直すわけではありません">▶ 経過を再現</button>
+      </div>
+      <div id="replaybar" hidden>
+        <span>記録した経過を早送りで見直しています（学習のやり直しではありません）</span>
+        <select id="speed"><option value="1">×1</option><option value="4" selected>×4</option><option value="16">×16</option></select>
+        <button id="replaystop" type="button" class="ghost">■ 結果に戻る</button>
+      </div>
+    </div>
+
+    <div class="card" id="loopcard">
+      <div class="nowrow"><div id="nowline" hidden></div><button id="stopbtn" type="button" class="danger" hidden title="いま実行している学習を、すぐに止めます">■ 強制終了</button></div>
+      <div class="loophead"><span class="muted" id="loopline"></span><span id="viewing"></span></div>
+      <div id="loopbadges"></div>
+      <ol id="flow"></ol>
+      <div id="progresswrap"><div id="progress"></div></div>
+      <div id="retarrow"></div>
+      <canvas id="spark" width="480" height="70" hidden></canvas>
+      <div id="scorerow"></div>
+      <div id="improve" hidden></div>
+    </div>
+
+    <div class="card" id="story" hidden>
+      <div class="blk link" id="fixblock"></div>
+      <div class="story-arrow" id="storyarrow" hidden>▼ 「報酬生成」へ渡されて</div>
+      <div class="blk link" id="chgblock"></div>
+    </div>
+  </section>
+
+  <section id="right">
+    <div class="card vcard">
+      <div id="resultcap" class="muted"></div>
+      <div id="videobox"><video id="video" controls muted loop playsinline></video><canvas id="overlay"></canvas><div id="novideo">学習が終わると、ここに結果が表示されます</div>
+        <div id="ovtools"><button id="ovbtn" type="button" class="ghost" hidden>関節と軌跡: オン</button><button id="scalebtn" type="button" class="ghost" hidden>目盛り: オフ</button><button id="viewbtn" type="button" class="ghost" hidden>視点: 動画</button></div>
+        <div id="freectl" hidden><button id="fplay" type="button" class="ghost">❚❚</button><input id="fslider" type="range" min="0" max="399" step="1" value="0"><span id="ftime"></span></div></div>
+    </div>
+    <div class="card tcard">
+      <div class="row"><label><span id="tracelabel">動きのグラフ</span><select id="tracegroup"></select></label></div>
+      <div id="tracewrap"><canvas id="trace"></canvas></div>
+      <div id="tracelegend" class="muted"></div>
+      <div id="tracemsg" class="muted"></div>
+    </div>
+  </section>
+</main>
+<div id="backdrop" hidden></div>
+<div id="modal" role="dialog" aria-modal="true" hidden>
+  <div class="mhead"><b id="mtitle"></b><button id="mclose" type="button" class="ghost">閉じる ✕</button></div>
+  <ol id="msteps"><li>① 成功条件を決める</li><li>② 確認して承認</li><li>③ 学習を始める</li></ol>
+  <div id="mbody"></div>
+</div>
+<aside id="drawer" hidden>
+  <div class="dhead"><b id="dtitle"></b><button id="dclose" type="button" class="ghost">閉じる ✕</button></div>
+  <div id="dbody"></div>
+</aside>
+<script>window.STATIC_SITE = true;</script>
+<script src="app.js"></script>
+</body>
+</html>

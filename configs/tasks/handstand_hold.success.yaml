@@ -1,0 +1,18 @@
+# 「逆立ちして」段階H0（逆立ちの姿勢を保つ）の数値の成功条件（草案）。人が確認して approved: true にするまで、ループは実行できない。
+#
+# 逆立ち = 前足だけで接地し、後ろ足を高く上げ、頭を下に向けた姿勢を保つ。歩行（H1）・円周上の歩行（H2）は別の版で扱う。
+#
+# 注意: 閾値は、Go2 の寸法（脚の長さ約0.3m、胴体の長さ約0.38m）からの見積もりで、実機での実測はまだ無い。
+# 立位の値（胴体高さ約0.29m、足先の接地高さ約0.023m）以外は、承認の前に妥当性を見てほしい。
+# 実測と合わなければ、新しい版（handstand_hold_v2 など）を作り直して承認する（承認済みの版は変更しない）。
+task: handstand_hold
+approved: true
+window_s: [3.0, 6.0]   # 録画6秒のうち、姿勢が落ち着いた後の3秒間を保てているかを判定する
+criteria:
+  - {metric: nose_up_deg, max: -60, min_fraction: 0.9, comment: 頭を尻より大きく下げる（真の逆立ちは約-90度。-60度は「ほぼ逆立ち」の下限）}
+  - {metric: front_feet_z_max_m, max: 0.05, min_fraction: 0.9, comment: 前の2本の足がどちらも接地している（接地で約0.023m）}
+  - {metric: rear_feet_z_min_m, min: 0.25, min_fraction: 0.9, comment: 後ろの2本の足がどちらも空中に上がっている}
+  - {metric: height_m, between: [0.35, 0.70], min_fraction: 0.9, comment: 胴体中心が立位（0.29m）より明確に高い。前足の長さ＋胴体の半分で約0.5m}
+  - {metric: roll_deg_abs, max: 20, min_fraction: 0.9, comment: 横に倒れない}
+  - {metric: xy_max_dist_m, max: 0.30, comment: その場で保つ（H1以降は歩くので別の版で扱う）}
+  - {metric: early_terminations, equals: 0, comment: 転倒などで打ち切られない}

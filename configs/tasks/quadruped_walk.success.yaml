@@ -1,0 +1,27 @@
+# 「四足で前に歩いて」の数値の成功条件。ダッシュボードで作成（2026-10-28 14:56）。
+# 人がダッシュボード上で確認・修正して承認した（approved: true）。
+# 学習の土台: configs/base_walk.yaml
+task: quadruped_walk
+approved: true
+window_s: [3, 8]
+criteria:
+- {metric: xy_dist_range_m, min: 1, comment: 窓内で水平距離が1m以上動く（前に進む）}
+- metric: yaw_total_deg
+  between: [-60, 60]
+  comment: まっすぐ進む（大きく旋回しない）
+- {metric: front_step_count_min, min: 3, comment: 前の左右の足がそれぞれ3回以上持ち上がる（本当に踏み出している）}
+- {metric: foot_z_FL_m_max, min: 0.06, comment: 前左足が地面から離れる}
+- {metric: foot_z_FR_m_max, min: 0.06, comment: 前右足が地面から離れる}
+- {metric: front_one_foot_up, min: 0.5, min_fraction: 0.3, comment: 前足が交互に1本ずつ持ち上がる時間が一定割合ある}
+- {metric: all_feet_up, max: 0.1, min_fraction: 0.9, comment: 4本とも浮いて跳ねることがない}
+- metric: height_m
+  between: [0.22, 0.36]
+  min_fraction: 0.9
+  comment: 立位の高さを保つ（伏せ・這いを通さない）
+- metric: nose_up_deg
+  between: [-15, 15]
+  min_fraction: 0.9
+  comment: 胴体がほぼ水平（逆立ち・後ろ足立ちを通さない）
+- {metric: roll_deg_abs, max: 20, min_fraction: 0.9, comment: 横に傾きすぎない}
+- {metric: front_feet_z_min_m, max: 0.06, min_fraction: 0.9, comment: 前足の少なくとも1本は常に接地して体を支える}
+- {metric: early_terminations, equals: 0, comment: 途中で倒れて打ち切られない}

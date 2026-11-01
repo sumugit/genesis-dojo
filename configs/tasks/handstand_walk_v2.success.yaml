@@ -1,0 +1,23 @@
+# 「逆立ちで歩いて」の数値の成功条件（第2版）。土台: configs/base_handstand_walk.yaml。
+#
+# 第1版（handstand_walk.success.yaml）に 足先以外で体を支える抜け道を禁止する基準と 交互に踏み出す歩きを求める基準を追加
+#  - head_z_m: 頭を地面に近づけない
+#  - front_knee_z_min_m: 肘（前足の膝）を地面に着けない
+#  - front_one_foot_up: 前足を交互に持ち上げる
+# 他の閾値は第1版と同じ
+task: handstand_walk_v2
+approved: true
+window_s: [3.0, 8.0]
+criteria:
+  - {metric: nose_up_deg, max: -60, min_fraction: 0.9, comment: 逆立ちの姿勢を保つ（頭を尻より大きく下げる）}
+  - {metric: rear_feet_z_min_m, min: 0.25, min_fraction: 0.9, comment: 後ろの2本の足がどちらも空中に上がっている}
+  - {metric: front_feet_z_min_m, max: 0.05, min_fraction: 0.9, comment: 前の足の少なくとも1本は常に接地して体を支える}
+  - {metric: head_z_m, min: 0.20, min_fraction: 0.9, comment: 頭を地面に着けない（頭で支えない。地面すれすれは約0.1m、本物の逆立ちは約0.29m）}
+  - {metric: front_knee_z_min_m, min: 0.12, min_fraction: 0.9, comment: 肘（前足の膝）を地面に着けない（地面に着くと約0.02m、本物の逆立ちは約0.22m）}
+  - {metric: foot_z_FL_m_max, min: 0.06, comment: 前左の足が窓内で地面から持ち上がった（歩いている）}
+  - {metric: foot_z_FR_m_max, min: 0.06, comment: 前右の足も持ち上がった}
+  - {metric: front_one_foot_up, min: 0.5, min_fraction: 0.3, comment: 窓内の3割以上の時間は、前足がちょうど1本だけ上がっている（左右交互に踏み出す）}
+  - {metric: height_m, between: [0.35, 0.70], min_fraction: 0.9, comment: 胴体中心が立位より明確に高い}
+  - {metric: roll_deg_abs, max: 25, min_fraction: 0.9, comment: 横に倒れない}
+  - {metric: xy_dist_range_m, between: [0.8, 4.0], comment: 窓の5秒間に水平に0.8〜4.0m進む}
+  - {metric: early_terminations, equals: 0, comment: 転倒などで打ち切られない}

@@ -1,0 +1,24 @@
+# 指示の文章 → 成功条件の対応表（ダッシュボードが、人の入力した指示から芸を自動で選ぶために使う）。
+# ここに載せるのは、人が承認した（approved: true）最新版の成功条件だけ。成功条件そのものの承認は *.success.yaml の approved で行う。
+# description と examples は、指示を分類する LLM に渡す説明。成功条件の判定には使わない。
+tasks:
+  - task: sit
+    name: お座り
+    description: 後ろ足を曲げて腰を落とし、頭を上げて座る。その場で静止する。
+    examples: [お座りして, 座って]
+  - task: spin
+    name: その場で回る
+    description: 位置をほぼ変えず、その場で水平に回転し続ける。
+    examples: [その場で回って, くるっと回って]
+  - task: handstand_hold_v2
+    name: 逆立ち（保持）
+    description: 前足だけで立ち、後ろ足を高く上げて逆立ちしたまま静止する。頭や肘は地面に着けない。
+    examples: [逆立ちして, 逆立ちを保って]
+  - task: handstand_walk_v3
+    name: 逆立ち歩行
+    description: 逆立ちの姿勢のまま、前足を左右交互に踏み出して前へ歩く。頭や肘で支えない。
+    examples: [逆立ちで歩いて, 逆立ちして前に進んで]
+  - task: handstand_circle
+    name: 逆立ちで円を描いて歩く
+    description: 逆立ちの姿勢のまま、前足を交互に踏み出して円を描くように歩く。
+    examples: [逆立ちで円を描いて歩いて, 逆立ちで回りながら歩いて]

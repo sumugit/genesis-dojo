@@ -1,0 +1,48 @@
+# 二足歩行（Go2が後ろ足だけで立って歩く）用の土台。頭を上に約60度傾けた、後ろ足立ちの初期姿勢から始める（カリキュラム。録画も同じ姿勢から。動画・報告書では「傾けた初期姿勢から開始」と明記すること）。
+# kp/kd と action_scale は逆立ち用（base_handstand.yaml）と同じ値（体を支える脚のPDゲインを上げ、関節の可動幅を広げる）。値は見積もりで、実機（シミュレータ）で要調整。
+# 観測に周期1.5Hzの時計（sin/cos）を足し、学習を600反復、録画を8秒にする。
+# Shared settings for LLM-loop experiments. scripts/loop.py adds exp_name, instruction and reward.
+seed: 1
+sim: genesis
+num_envs: 4096
+max_iterations: 600   # 歩行は長く学習する
+env:
+  joint_names: [FR_hip_joint, FR_thigh_joint, FR_calf_joint, FL_hip_joint, FL_thigh_joint, FL_calf_joint, RR_hip_joint, RR_thigh_joint,
+    RR_calf_joint, RL_hip_joint, RL_thigh_joint, RL_calf_joint]
+  default_joint_angles: {FL_hip_joint: 0.0, FR_hip_joint: 0.0, RL_hip_joint: 0.0, RR_hip_joint: 0.0, FL_thigh_joint: 0.8,
+    FR_thigh_joint: 0.8, RL_thigh_joint: 1.0, RR_thigh_joint: 1.0, FL_calf_joint: -1.5, FR_calf_joint: -1.5, RL_calf_joint: -1.5,
+    RR_calf_joint: -1.5}
+  kp: 50.0
+  kd: 1.5
+  base_init_pos: [0.0, 0.0, 0.43]
+  base_init_quat: [0.866, 0.0, -0.5, 0.0]   # 頭を上に約60度（y軸まわり。向きの符号は scripts/probe_pose.py で確認する。逆立ち用は頭を下に50度で +0.4226）
+  episode_length_s: 10.0
+  action_scale: 0.5
+  clip_actions: 100.0
+  clock_hz: 1.5   # 観測に周期1.5Hzの sin/cos を足す（obs 42→44次元）
+obs_scales: {ang_vel: 0.25, dof_pos: 1.0, dof_vel: 0.05}
+train:
+  algorithm: {class_name: PPO, clip_param: 0.2, desired_kl: 0.01, entropy_coef: 0.01, gamma: 0.99, lam: 0.95, learning_rate: 0.001,
+    max_grad_norm: 1.0, num_learning_epochs: 5, num_mini_batches: 4, schedule: adaptive, use_clipped_value_loss: true, value_loss_coef: 1.0}
+  actor:
+    class_name: MLPModel
+    hidden_dims: [512, 256, 128]
+    activation: elu
+    distribution_cfg: {class_name: GaussianDistribution, init_std: 1.0, std_type: scalar}
+  critic:
+    class_name: MLPModel
+    hidden_dims: [512, 256, 128]
+    activation: elu
+  obs_groups:
+    actor: [policy]
+    critic: [policy]
+  num_steps_per_env: 24
+  save_interval: 100
+  logger: tensorboard
+record:
+  seconds: 8.0   # 歩く距離を見るので、録画を8秒にする
+  res: [1280, 720]
+  fov: 40
+  cam_offset: [0.0, -2.2, 0.4]   # 歩いて進む姿を、横から全身が入るように少し遠くから
+  settle_s: 3.0
+  lookat_z: 0.3

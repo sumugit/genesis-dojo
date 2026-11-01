@@ -1,0 +1,43 @@
+tasks:
+- task: jump_land
+  name: ジャンプして着地
+  description: 立位から4本の足で地面を蹴って全身を空中に浮かせ、転ばずに立位へ着地する。窓内で少なくとも1回ジャンプして、窓の終わりまでに安定して立っている。
+  examples:
+  - ジャンプして着地
+  base: configs/base.yaml
+- task: biped_walk
+  name: 二足歩行
+  description: 前足を地面から離して後ろ足2本だけで上体を起こし、その姿勢のまま前進する。
+  examples:
+  - 二足歩行
+  base: configs/base.yaml
+- task: biped_walk_v2
+  name: 二足歩行（見直し）
+  description: 前足を地面から離して後ろ足2本だけで上体を起こし、その姿勢のまま前進する。
+  examples:
+  - 二足歩行
+  base: configs/base.yaml
+- task: quadruped_walk
+  name: 四足歩行
+  description: Go2が四本足で立った姿勢を保ったまま、左右の前足を交互に持ち上げて、まっすぐ前に歩く。跳ねたり、頭や肘で支えたり、滑って進んだりしない。
+  examples:
+  - 四足で前に歩いて
+  base: configs/base_walk.yaml
+- task: bunny_hop
+  name: ウサギ跳び
+  description: 四本の足を同時に地面から離して何度も跳ねながら、前方へ進む。胴体は大きく傾けず、倒れない。
+  examples:
+  - ウサギのように跳ねて前に進んで
+  base: configs/base_walk.yaml
+- task: crouch_sneak_circle
+  name: しゃがみ忍び足で円歩き
+  description: 胴体を低く構えたまま（しゃがんだ姿勢）、ゆっくり四足の足運びで歩き、円を描くように進む。
+  examples:
+  - しゃがんで忍び足で円を描いて歩いて
+  base: configs/base_walk.yaml
+- task: crouch_sneak_circle_v2
+  name: しゃがみ忍び足で円歩き（見直し）
+  description: 胴体を低く構えたまま（しゃがんだ姿勢）、ゆっくり四足の足運びで歩き、円を描くように進む。
+  examples:
+  - しゃがんで忍び足で円を描いて歩いて
+  base: configs/base_walk.yaml

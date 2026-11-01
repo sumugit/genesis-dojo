@@ -1,0 +1,24 @@
+# 「逆立ちで歩いて」の数値の成功条件（第3版）。
+# 土台: configs/base_handstand_walk.yaml（録画8秒・600イテレーション・観測に周期1.5Hzの時計）。設計ヒント: handstand_walk_v3.hint.md。
+#
+# 第2版からの変更
+#  1. 追加: front_step_count_min >= 3（窓の5秒間に 前の左右の足がそれぞれ3回以上持ち上がる）。滑って進む動きを除く
+#  2. 緩和: xy_dist_range_m の上限を 4.0 → 8.0m（約1.6m/s まで許す）
+# 他の閾値は第2版と同じ
+task: handstand_walk_v3
+approved: true
+window_s: [3.0, 8.0]
+criteria:
+  - {metric: nose_up_deg, max: -60, min_fraction: 0.9, comment: 逆立ちの姿勢を保つ（頭を尻より大きく下げる）}
+  - {metric: rear_feet_z_min_m, min: 0.25, min_fraction: 0.9, comment: 後ろの2本の足がどちらも空中に上がっている}
+  - {metric: front_feet_z_min_m, max: 0.05, min_fraction: 0.9, comment: 前の足の少なくとも1本は常に接地して体を支える}
+  - {metric: head_z_m, min: 0.20, min_fraction: 0.9, comment: 頭を地面に着けない}
+  - {metric: front_knee_z_min_m, min: 0.12, min_fraction: 0.9, comment: 肘（前足の膝）を地面に着けない}
+  - {metric: foot_z_FL_m_max, min: 0.06, comment: 前左の足が窓内で地面から持ち上がった}
+  - {metric: foot_z_FR_m_max, min: 0.06, comment: 前右の足も持ち上がった}
+  - {metric: front_step_count_min, min: 3, comment: 前の左右の足がそれぞれ窓内で3回以上、0.06m超まで持ち上がる（交互に踏み出して歩く。小さなジッターは数えない）}
+  - {metric: front_one_foot_up, min: 0.5, min_fraction: 0.3, comment: 窓内の3割以上の時間は、前足がちょうど1本だけ上がっている}
+  - {metric: height_m, between: [0.35, 0.70], min_fraction: 0.9, comment: 胴体中心が立位より明確に高い}
+  - {metric: roll_deg_abs, max: 25, min_fraction: 0.9, comment: 横に倒れない}
+  - {metric: xy_dist_range_m, between: [0.8, 8.0], comment: 窓の5秒間に水平に0.8〜8.0m進む}
+  - {metric: early_terminations, equals: 0, comment: 転倒などで打ち切られない}

@@ -1,0 +1,49 @@
+# 逆立ち（handstand_hold）用の土台。base.yaml との違いだけが意味を持つ（`loop.py --base-config configs/base_handstand.yaml`）。
+#  - kp/kd: 前足で体を支えるために、PDゲインを上げる（20/0.5 → 50/1.5。値は見積もりで、試行しながら調整する）
+#  - action_scale: 関節の動かせる幅を広げる（0.25 → 0.5）。逆立ちの姿勢は既定の立位から大きく離れている
+#  - base_init_quat / base_init_pos: 立位からの探索では逆立ちに届かないため、頭を約50度下げた姿勢から始める（カリキュラム）。
+#    録画も同じ初期姿勢から始まるので、動画・レポートでは「初期姿勢を傾けた条件」であることを明示する
+# Shared settings for LLM-loop experiments. scripts/loop.py adds exp_name, instruction and reward.
+seed: 1
+sim: genesis
+num_envs: 4096
+max_iterations: 300
+env:
+  joint_names: [FR_hip_joint, FR_thigh_joint, FR_calf_joint, FL_hip_joint, FL_thigh_joint, FL_calf_joint, RR_hip_joint, RR_thigh_joint,
+    RR_calf_joint, RL_hip_joint, RL_thigh_joint, RL_calf_joint]
+  default_joint_angles: {FL_hip_joint: 0.0, FR_hip_joint: 0.0, RL_hip_joint: 0.0, RR_hip_joint: 0.0, FL_thigh_joint: 0.8,
+    FR_thigh_joint: 0.8, RL_thigh_joint: 1.0, RR_thigh_joint: 1.0, FL_calf_joint: -1.5, FR_calf_joint: -1.5, RL_calf_joint: -1.5,
+    RR_calf_joint: -1.5}
+  kp: 50.0
+  kd: 1.5
+  base_init_pos: [0.0, 0.0, 0.50]
+  base_init_quat: [0.9063, 0.0, 0.4226, 0.0]   # 頭を下に約50度（y軸まわりの回転。向きの符号は probe_pose.py で確認）
+  episode_length_s: 10.0
+  action_scale: 0.5
+  clip_actions: 100.0
+obs_scales: {ang_vel: 0.25, dof_pos: 1.0, dof_vel: 0.05}
+train:
+  algorithm: {class_name: PPO, clip_param: 0.2, desired_kl: 0.01, entropy_coef: 0.01, gamma: 0.99, lam: 0.95, learning_rate: 0.001,
+    max_grad_norm: 1.0, num_learning_epochs: 5, num_mini_batches: 4, schedule: adaptive, use_clipped_value_loss: true, value_loss_coef: 1.0}
+  actor:
+    class_name: MLPModel
+    hidden_dims: [512, 256, 128]
+    activation: elu
+    distribution_cfg: {class_name: GaussianDistribution, init_std: 1.0, std_type: scalar}
+  critic:
+    class_name: MLPModel
+    hidden_dims: [512, 256, 128]
+    activation: elu
+  obs_groups:
+    actor: [policy]
+    critic: [policy]
+  num_steps_per_env: 24
+  save_interval: 100
+  logger: tensorboard
+record:
+  seconds: 6.0
+  res: [1280, 720]
+  fov: 45
+  cam_offset: [0.0, -2.3, 0.62]   # 逆立ち・歩行で頭から足先まで常に写す（遠く、胴体の中ほどの高さから）
+  settle_s: 3.0
+  lookat_z: 0.62

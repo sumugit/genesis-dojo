@@ -1,0 +1,25 @@
+# 「逆立ちで円を描いて歩いて」H2 の数値の成功条件（草案）。人が確認して approved: true にするまで、ループは実行できない。
+# 土台: configs/base_handstand_circle.yaml（録画10秒）。
+#
+# H1 の v2（handstand_walk_v2）の姿勢・歩き方の基準（頭・肘を着けない、交互に踏み出す）をそのまま使い、
+# 進み方を「直進」から「円に沿って回る」に変える。向きが定義できない逆立ちなので、水平な軌跡に円を当てはめて判定する。
+# 注意: 円の大きさ・回る量の閾値は見積もりで、実測は無い（逆立ち歩行 H1 の速さ 約0.2〜0.9m/s から、7秒で1.4〜6mの経路）。
+#   承認の前に妥当性を見てほしい。
+task: handstand_circle
+approved: true
+window_s: [3.0, 10.0]   # 録画10秒のうち、立ち上がりが済んだ後の7秒間
+criteria:
+  - {metric: nose_up_deg, max: -60, min_fraction: 0.9, comment: 逆立ちの姿勢を保つ}
+  - {metric: rear_feet_z_min_m, min: 0.25, min_fraction: 0.9, comment: 後ろの2本の足がどちらも空中}
+  - {metric: front_feet_z_min_m, max: 0.05, min_fraction: 0.9, comment: 前の足の少なくとも1本は常に接地}
+  - {metric: head_z_m, min: 0.20, min_fraction: 0.9, comment: 頭を地面に着けない}
+  - {metric: front_knee_z_min_m, min: 0.12, min_fraction: 0.9, comment: 肘（前足の膝）を地面に着けない}
+  - {metric: foot_z_FL_m_max, min: 0.06, comment: 前左の足が持ち上がった（歩いている）}
+  - {metric: foot_z_FR_m_max, min: 0.06, comment: 前右の足も持ち上がった}
+  - {metric: front_one_foot_up, min: 0.5, min_fraction: 0.3, comment: 前足を交互に踏み出す}
+  - {metric: height_m, between: [0.35, 0.70], min_fraction: 0.9, comment: 胴体中心が立位より明確に高い}
+  - {metric: roll_deg_abs, max: 25, min_fraction: 0.9, comment: 横に倒れない}
+  - {metric: circle_radius_m, between: [0.4, 1.5], comment: 軌跡が半径0.4〜1.5mの円に当てはまる（直線に近いと当てはめられず不合格）}
+  - {metric: circle_fit_rms_m, max: 0.12, comment: 軌跡が当てはめた円から大きく外れない（円に沿っている）}
+  - {metric: circle_arc_deg, min: 120, comment: 窓の間に円の中心まわりを120度以上進む（円周の3分の1以上）}
+  - {metric: early_terminations, equals: 0, comment: 転倒などで打ち切られない}

@@ -1,0 +1,33 @@
+# 歩行の設計ヒントの一覧（人が書いた助言）。ダッシュボードが、指示の文章に合うヒントを選び、報酬を書く LLM に渡す。
+# 成功条件の判定には使わない。AI採点（VLM）には見せない。使ったことは、報告書に明記する。
+hints:
+  - id: walk_quadruped
+    name: 四足歩行
+    applies: 四足で、ふつうの姿勢のまま、歩く・前へ進む・歩き回る・円を描いて歩く。逆立ち、二足（後ろ足で立つ）、その場で回る、跳ねる（ジャンプ、ウサギ跳び）、走る（ダッシュ）、しゃがんで歩く（忍び足）は含まない（これらは別の動きで、歩行のヒントと食い違う）。
+    file: configs/hints/walk_quadruped.hint.md
+    base: configs/base_walk.yaml
+    spec_notes: |
+      歩行の成功条件の例（値は目安。窓は録画8秒のうち 3〜8 秒）:
+      - 前進: xy_dist_range_m が 1.0 以上（窓内で水平距離が1m以上動く）、yaw_total_deg は -60〜60（まっすぐ）
+      - 足を交互に持ち上げる: front_step_count_min が 3 以上、foot_z_FL_m_max と foot_z_FR_m_max が 0.06 以上、front_one_foot_up が 0.5 以上（min_fraction 0.3）
+      - 跳ねない: all_feet_up が 0.1 以下（max, min_fraction 0.9）
+      - 立った姿勢: height_m 0.22〜0.36、nose_up_deg -15〜15、roll_deg_abs 20 以下（いずれも min_fraction 0.9）
+      - 倒れない: early_terminations equals 0
+  - id: walk_biped
+    name: 二足歩行（後ろ足で立つ）
+    applies: 後ろ足の2本だけで立って歩く、二足歩行する、人のように立って歩く。
+    file: configs/hints/walk_biped.hint.md
+    base: configs/base_biped.yaml
+    spec_notes: |
+      二足歩行の成功条件の例（値は目安。窓は録画8秒のうち 3〜8 秒。難しい課題なので、まず「立つ」だけの条件も検討する）:
+      - 後ろ足で立つ: nose_up_deg が 45〜85（min_fraction 0.9）、height_m が 0.40〜0.70
+      - 前足で支えない: front_feet_z_min_m が 0.20 以上、front_knee_z_min_m が 0.20 以上（min_fraction 0.9）
+      - 後ろ足を交互に: rear_step_count_min が 2 以上、rear_one_foot_up が 0.5 以上（min_fraction 0.3）、foot_z_RL_m_max と foot_z_RR_m_max が 0.06 以上
+      - 前進: xy_dist_range_m が 0.5 以上。横に倒れない: roll_deg_abs 25 以下。early_terminations equals 0
+  - id: handstand_walk
+    name: 逆立ち歩行
+    applies: 前足だけで逆立ちして歩く（頭や肘で支えない）。
+    file: configs/tasks/handstand_walk_v3.hint.md
+    base: configs/base_handstand_walk.yaml
+    spec_notes: |
+      逆立ち歩行の成功条件の例: handstand_walk_v3 を参照（踏み出し回数 front_step_count_min、head_z_m 0.2 以上、front_knee_z_min_m 0.12 以上、front_one_foot_up など）

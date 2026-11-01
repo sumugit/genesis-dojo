@@ -1,0 +1,20 @@
+# 「逆立ちで歩いて」段階H1（逆立ちの姿勢を保ったまま前足で歩いて進む）の数値の成功条件（草案）。
+# 人が確認して approved: true にするまで、ループは実行できない。土台: configs/base_handstand_walk.yaml（録画8秒）。
+#
+# H0（handstand_hold）との違い: 前足の2本が「常に接地」ではなく、交互に持ち上げて歩くこと。そして窓内で水平に進むこと。
+# 注意: 閾値はすべて見積もりで、逆立ち歩行の実測はまだ無い。特に進む距離の範囲と、足を持ち上げる高さ（0.06m）は
+#   承認の前に妥当性を見てほしい。実測と合わなければ新しい版を作る（承認済みの版は変更しない）。
+# 向き（進む方向）は問わない（逆立ちでは向きが定義できないため）。進んだ距離だけを見る。
+task: handstand_walk
+approved: true
+window_s: [3.0, 8.0]   # 録画8秒のうち、立ち上がりが済んだ後の5秒間で判定する
+criteria:
+  - {metric: nose_up_deg, max: -60, min_fraction: 0.9, comment: 逆立ちの姿勢を保つ（頭を尻より大きく下げる）}
+  - {metric: rear_feet_z_min_m, min: 0.25, min_fraction: 0.9, comment: 後ろの2本の足がどちらも空中に上がっている}
+  - {metric: front_feet_z_min_m, max: 0.05, min_fraction: 0.9, comment: 前の足の少なくとも1本は常に接地して体を支える（両方が浮いて倒れていない）}
+  - {metric: foot_z_FL_m_max, min: 0.06, comment: 前左の足が窓内で地面から持ち上がった（歩いている。接地で約0.023m）}
+  - {metric: foot_z_FR_m_max, min: 0.06, comment: 前右の足も持ち上がった（左右の足を使っている）}
+  - {metric: height_m, between: [0.35, 0.70], min_fraction: 0.9, comment: 胴体中心が立位（0.29m）より明確に高い}
+  - {metric: roll_deg_abs, max: 25, min_fraction: 0.9, comment: 横に倒れない（歩くので逆立ち静止より少し許容）}
+  - {metric: xy_dist_range_m, between: [0.8, 4.0], comment: 窓の5秒間に水平に0.8〜4.0m進む（約0.16〜0.8m/s。0.8m未満は進んでいない、4m超は暴走）}
+  - {metric: early_terminations, equals: 0, comment: 転倒などで打ち切られない}

@@ -1,0 +1,17 @@
+.venv/
+genesis-src/
+__pycache__/
+*.pyc
+logs/
+videos/
+checkpoints/
+runs/
+*.pt
+*.mp4
+*.log
+.env
+*.key
+*.pem
+
+# the public demo ships its (small) videos
+!demo/data/video/*.mp4

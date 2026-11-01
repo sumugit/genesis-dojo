@@ -1,0 +1,30 @@
+# 「しゃがんで忍び足で円を描いて歩いて」の数値の成功条件。ダッシュボードで作成（2026-10-30 09:13）。
+# 人がダッシュボード上で確認・修正して承認した（approved: true）。
+# 学習の土台: configs/base_walk.yaml
+task: crouch_sneak_circle
+approved: true
+window_s: [3.5, 8]
+criteria:
+- metric: height_m
+  between: [0.16, 0.23]
+  min_fraction: 0.9
+  comment: 立位(約0.29m)より明確に低いが、腹を地面に着けない高さを保つ
+- {metric: front_knee_z_min_m, min: 0.08, min_fraction: 0.9, comment: 肘・膝を地面に着けて支えていない}
+- {metric: head_z_m, min: 0.12, min_fraction: 0.9, comment: 頭を地面に着けていない}
+- metric: nose_up_deg
+  between: [-20, 20]
+  min_fraction: 0.9
+  comment: 前後の傾きが小さく、ほぼ水平な姿勢
+- {metric: roll_deg_abs, max: 15, min_fraction: 0.9, comment: 横に大きく傾かない}
+- {metric: all_feet_up, max: 0, min_fraction: 0.9, comment: 跳ねたり浮いたりせず、常にどれかの足が接地している（忍び足）}
+- {metric: dof_vel_rms_mean, max: 6, comment: 関節の動きが激しすぎない（静かでゆっくりした動き）}
+- {metric: front_step_count_min, min: 2, comment: 前の左右の足がそれぞれ2回以上持ち上がり、実際に足踏みして歩いている（滑って進んでいない）}
+- metric: circle_radius_m
+  between: [0.3, 1.5]
+  comment: 軌跡が適度な半径の円になっている（直線や極端に大きな弧ではない）
+- {metric: circle_fit_rms_m, max: 0.1, comment: 軌跡が当てはめた円によく沿っている}
+- {metric: circle_arc_deg, min: 90, comment: 円の中心まわりに少なくとも90度は進んでいる}
+- {metric: yaw_rate_abs_deg_s, min: 8, min_fraction: 0.8, comment: 向きを問わず、継続して旋回している}
+- {metric: yaw_rate_steady_fraction, min: 0.6, comment: 一定の向きに回り続けている（左右にふらつかない）}
+- {metric: xy_path_length_m, min: 0.6, comment: エピソード全体で実際に歩いて移動している}
+- {metric: early_terminations, equals: 0, comment: 倒れて打ち切られない}

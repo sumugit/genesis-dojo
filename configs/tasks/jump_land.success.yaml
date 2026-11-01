@@ -1,0 +1,21 @@
+# 「ジャンプして着地」の数値の成功条件。ダッシュボードで作成（2026-10-27 14:13）。
+# 人がダッシュボード上で確認・修正して承認した（approved: true）。
+# 学習の土台: configs/base.yaml
+task: jump_land
+approved: true
+window_s: [3, 6]
+criteria:
+- {metric: height_m_max, min: 0.4, comment: 窓内で胴体が立位(約0.29m)より十分高く跳ね上がる}
+- {metric: front_feet_z_min_m_max, min: 0.08, comment: 窓内で前の2本の足が同時に地面から離れる時がある}
+- {metric: rear_feet_z_min_m_max, min: 0.08, comment: 窓内で後ろの2本の足が同時に地面から離れる時がある}
+- {metric: height_m_min, min: 0.2, comment: 着地で潰れたり、倒れ込んだり、腹を地面に着けたりしない}
+- metric: height_m
+  between: [0.2, 0.6]
+  min_fraction: 0.9
+  comment: 窓内のほぼ全時間で、胴体が妥当な高さにある(跳躍中と着地後を含む)
+- metric: nose_up_deg
+  between: [-30, 30]
+  min_fraction: 0.9
+  comment: 前後に大きく傾かない(宙返りや逆立ちは不可)
+- {metric: roll_deg_abs, max: 30, min_fraction: 0.9, comment: 横に大きく傾かない}
+- {metric: early_terminations, equals: 0, comment: 転倒などで途中打ち切りにならない}

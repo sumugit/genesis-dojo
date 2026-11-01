@@ -1,0 +1,23 @@
+# 「二足歩行」の数値の成功条件。ダッシュボードで作成（2026-10-27 15:12）。
+# 人がダッシュボード上で確認・修正して承認した（approved: true）。
+# 学習の土台: configs/base.yaml
+task: biped_walk_v2
+approved: true
+window_s: [3, 6]
+criteria:
+- metric: nose_up_deg
+  between: [60, 85]
+  min_fraction: 0.9
+  comment: 上体をほぼ直立に近く起こしている（約60°止まりの中途半端な傾きは不可）が、後ろに倒れ込まない
+- {metric: front_feet_z_min_m, min: 0.12, min_fraction: 0.9, comment: 前足2本とも地面から離れている}
+- {metric: rear_feet_z_min_m, max: 0.06, min_fraction: 0.9, comment: 後ろ足の少なくとも1本は常に接地して体を支えている（ジャンプや逆立ちではない）}
+- metric: height_m
+  between: [0.45, 0.7]
+  min_fraction: 0.9
+  comment: 胴体が立位(約0.29m)より明確に高く、後ろ足で立ち上がっている
+- {metric: roll_deg_abs, max: 20, min_fraction: 0.9, comment: 横に傾きすぎていない}
+- {metric: yaw_rate_abs_deg_s, max: 90, min_fraction: 0.9, comment: その場で激しく回転したり円を描いたりしていない}
+- {metric: rear_feet_asym_m_max, min: 0.05, comment: 後ろ足の左右が前後に入れ替わる（片側が前に出る）}
+- {metric: rear_feet_asym_m_min, max: -0.05, comment: 逆側の後ろ足も前に出ており、左右交互に踏み出している}
+- {metric: xy_dist_range_m, min: 0.3, comment: 窓内で実際に前進している}
+- {metric: early_terminations, equals: 0, comment: 途中で倒れて打ち切られない}

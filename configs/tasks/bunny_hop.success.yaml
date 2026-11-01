@@ -1,0 +1,31 @@
+# 「ウサギのように跳ねて前に進んで」の数値の成功条件。ダッシュボードで作成（2026-10-30 09:02）。
+# 人がダッシュボード上で確認・修正して承認した（approved: true）。
+# 学習の土台: configs/base_walk.yaml
+task: bunny_hop
+approved: true
+window_s: [3, 8]
+criteria:
+- {metric: early_terminations, equals: 0, comment: 途中で倒れて打ち切られない}
+- {metric: all_feet_up_max, min: 1, comment: 窓内で少なくとも1回は4本とも空中に浮く（跳ねている）}
+- metric: all_feet_up_mean
+  between: [0.1, 0.7]
+  comment: 浮いている時間が適度にある。常に浮いたり、全く浮かなかったりしない
+- {metric: front_step_count_min, min: 2, comment: 前の左右の足がそれぞれ2回以上持ち上がる（繰り返し跳ねる）}
+- {metric: rear_step_count_min, min: 2, comment: 後ろの左右の足がそれぞれ2回以上持ち上がる（繰り返し跳ねる）}
+- {metric: xy_dist_range_m, min: 0.8, comment: 窓内で水平に0.8m以上進む（その場跳びではない）}
+- {metric: xy_max_dist_m, min: 1.5, comment: 開始位置から1.5m以上離れる}
+- metric: yaw_total_deg
+  between: [-60, 60]
+  comment: ほぼまっすぐ進む（大きく旋回しない）
+- {metric: yaw_rate_abs_deg_s, max: 60, min_fraction: 0.9, comment: 旋回速度が小さい}
+- metric: height_m
+  between: [0.15, 0.55]
+  min_fraction: 0.9
+  comment: 胴体の高さが立位から跳躍の範囲に収まる（潰れたり暴れたりしない）
+- metric: nose_up_deg
+  between: [-30, 30]
+  min_fraction: 0.9
+  comment: 前後の傾きが小さい（逆立ちや後ろ足立ちにならない）
+- {metric: roll_deg_abs, max: 30, min_fraction: 0.9, comment: 横に大きく傾かない}
+- {metric: head_z_m, min: 0.15, min_fraction: 0.9, comment: 頭を地面に着けて支えない}
+- {metric: front_knee_z_min_m, min: 0.06, min_fraction: 0.9, comment: 肘を地面に着けて支えない}

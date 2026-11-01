@@ -1,0 +1,11 @@
+# 「お座りして」の数値の成功条件。
+task: sit
+approved: true
+window_s: [3.0, 6.0]   # 録画6秒のうち、立ち上がりが落ち着いた後の時間帯で判定する
+criteria:
+  - {metric: nose_up_deg, between: [40, 65], min_fraction: 0.9, comment: 頭を尻より高く上げる}
+  - {metric: height_m, between: [0.17, 0.26], min_fraction: 0.9, comment: 腰を落とす（立つと約0.29m）}
+  - {metric: foot_z_max_m, max: 0.04, min_fraction: 0.9, comment: 4本の足がすべて接地（接地で約0.023m）}
+  - {metric: roll_deg_abs, max: 10, min_fraction: 0.9, comment: 横に傾かない}
+  - {metric: xy_max_dist_m, max: 0.15, comment: その場から動かない}
+  - {metric: early_terminations, equals: 0, comment: 転倒などで打ち切られない}

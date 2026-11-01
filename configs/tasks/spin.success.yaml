@@ -1,0 +1,18 @@
+# 「その場で回って」の数値の成功条件（草案）。人が確認して approved: true にするまで、ループは実行できない。
+#
+# まだどの実験も行っていない状態で作った条件（学習結果を見て調整していない）。
+# 決めるべき点（人が判断）:
+#   - 回る速さ: 60〜180 deg/s は仮の値。
+#   - 向き: この草案は方向を問わない（絶対値で判定）。向きを指定する指示のときは、
+#     yaw_rate_abs_deg_s_mean を yaw_rate_deg_s_mean（反時計回りが正）に置き換える。
+task: spin
+approved: true
+window_s: [3.0, 6.0]
+criteria:
+  - {metric: yaw_rate_abs_deg_s_mean, between: [60, 180], comment: 回る速さ（方向は問わない）}
+  - {metric: yaw_rate_steady_fraction, min: 0.8, comment: 一定の向きに回り続ける（途中で止まる・逆回りにならない）}
+  - {metric: xy_max_dist_m, max: 0.5, comment: その場で回る（円を描いて歩き回らない）}
+  - {metric: height_m, between: [0.25, 0.35], min_fraction: 0.9, comment: 立ったまま（立つと約0.29m）}
+  - {metric: nose_up_deg, between: [-20, 20], min_fraction: 0.9, comment: 体を水平に保つ（ヨーの定義が有効な姿勢）}
+  - {metric: roll_deg_abs, max: 25, min_fraction: 0.9, comment: 横に傾き過ぎない}
+  - {metric: early_terminations, equals: 0, comment: 転倒などで打ち切られない}

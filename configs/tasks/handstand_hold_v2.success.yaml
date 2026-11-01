@@ -1,0 +1,17 @@
+# 「逆立ちして」の数値の成功条件（第2版）。
+#
+# 第1版（handstand_hold.success.yaml）からの変更は1点
+#   xy_max_dist_m <= 0.30（録画全体の最大ずれ）を xy_dist_range_m <= 0.10（保持の窓内の変動幅）に置き換え
+# 理由: 録画全体の最大ずれには 傾けた初期姿勢から立ち上がる間の移動（約0.3〜0.5m）も含まれる
+# 他の閾値（nose_up_deg・足の高さ・height_m・roll・early_terminations）は第1版と同じ
+task: handstand_hold_v2
+approved: true
+window_s: [3.0, 6.0]   # 録画6秒のうち、姿勢が落ち着いた後の3秒間を保てているかを判定する
+criteria:
+  - {metric: nose_up_deg, max: -60, min_fraction: 0.9, comment: 頭を尻より大きく下げる（真の逆立ちは約-90度。-60度は「ほぼ逆立ち」の下限）}
+  - {metric: front_feet_z_max_m, max: 0.05, min_fraction: 0.9, comment: 前の2本の足がどちらも接地している（接地で約0.023m）}
+  - {metric: rear_feet_z_min_m, min: 0.25, min_fraction: 0.9, comment: 後ろの2本の足がどちらも空中に上がっている}
+  - {metric: height_m, between: [0.35, 0.70], min_fraction: 0.9, comment: 胴体中心が立位（0.29m）より明確に高い。前足の長さ＋胴体の半分で約0.5m}
+  - {metric: roll_deg_abs, max: 20, min_fraction: 0.9, comment: 横に倒れない}
+  - {metric: xy_dist_range_m, max: 0.10, comment: 姿勢を保っている窓（3〜6秒）の間は、その場から流れない（窓内の水平距離の変動幅。立ち上がりの移動は含まない）}
+  - {metric: early_terminations, equals: 0, comment: 転倒などで打ち切られない}
